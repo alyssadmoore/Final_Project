@@ -457,11 +457,12 @@ public class MusicStoreGUI extends JFrame{
     // Populates the consignors list on startup from the database
     void populateConsignorList() throws SQLException {
         conn = DBUtils.getConnection();
-        PreparedStatement populateList = conn.prepareStatement(populateListSQL);
-        populateList.setString(1, LAST_NAME_COLUMN_NAME);
-        populateList.setString(2, FIRST_NAME_COLUMN_NAME);
-        populateList.setString(3, CONSIGNOR_NUMBER_COLUMN_NAME);
-        ResultSet rs = populateList.executeQuery();
+//        PreparedStatement populateList = conn.prepareStatement(populateListSQL);
+        String populate = "SELECT LastName, FirstName FROM Consignors";
+//        populateList.setString(1, "LastName");
+//        populateList.setString(2, "FirstName");
+//        populateList.setString(3, "Consignors");
+        ResultSet rs = statement.executeQuery(populate);
         while (rs.next()) {
             String lastName = rs.getString(LAST_NAME_COLUMN_NAME);
             String firstName = rs.getString(FIRST_NAME_COLUMN_NAME);
