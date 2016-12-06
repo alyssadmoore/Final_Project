@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="MusicStoreGUI">
-  <grid id="27dc6" binding="rootPanel" layout-manager="GridLayoutManager" row-count="16" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="27dc6" binding="rootPanel" layout-manager="GridLayoutManager" row-count="15" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
       <xy x="20" y="20" width="560" height="529"/>
@@ -152,14 +152,6 @@
           <text value="Sale Price:"/>
         </properties>
       </component>
-      <component id="b83e6" class="javax.swing.JLabel">
-        <constraints>
-          <grid row="14" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Sale Date:"/>
-        </properties>
-      </component>
       <component id="a6d4b" class="javax.swing.JTextField" binding="removeRecordNum">
         <constraints>
           <grid row="12" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
@@ -176,17 +168,9 @@
         </constraints>
         <properties/>
       </component>
-      <component id="bb068" class="javax.swing.JTextField" binding="removeRecordDate">
-        <constraints>
-          <grid row="14" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-            <preferred-size width="150" height="-1"/>
-          </grid>
-        </constraints>
-        <properties/>
-      </component>
       <component id="49b99" class="javax.swing.JButton" binding="removeRecordButton" default-binding="true">
         <constraints>
-          <grid row="15" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="14" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Remove Record"/>
@@ -200,30 +184,6 @@
           <text value="List of Consignors (click for more information):"/>
         </properties>
       </component>
-      <component id="df1c" class="javax.swing.JList" binding="consignorsList">
-        <constraints>
-          <grid row="1" column="2" row-span="6" col-span="1" vsize-policy="6" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
-            <preferred-size width="150" height="50"/>
-          </grid>
-        </constraints>
-        <properties/>
-      </component>
-      <component id="ea57a" class="javax.swing.JButton" binding="add1WeekButton">
-        <constraints>
-          <grid row="15" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Add 1 week to all records' in-store time"/>
-        </properties>
-      </component>
-      <component id="593bd" class="javax.swing.JButton" binding="add1DayButton">
-        <constraints>
-          <grid row="14" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Add 1 day to all records' in-store time"/>
-        </properties>
-      </component>
       <component id="dc877" class="javax.swing.JLabel">
         <constraints>
           <grid row="7" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -231,14 +191,6 @@
         <properties>
           <text value="List of Records (click for more information):"/>
         </properties>
-      </component>
-      <component id="314b4" class="javax.swing.JList" binding="recordsList">
-        <constraints>
-          <grid row="8" column="2" row-span="6" col-span="1" vsize-policy="6" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
-            <preferred-size width="150" height="50"/>
-          </grid>
-        </constraints>
-        <properties/>
       </component>
       <component id="5632f" class="javax.swing.JLabel">
         <constraints>
@@ -280,9 +232,35 @@
         </constraints>
         <properties/>
       </component>
+      <scrollpane id="4d0f">
+        <constraints>
+          <grid row="1" column="2" row-span="6" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="df1c" class="javax.swing.JList" binding="consignorsList">
+            <constraints/>
+            <properties/>
+          </component>
+        </children>
+      </scrollpane>
+      <scrollpane id="34926">
+        <constraints>
+          <grid row="8" column="2" row-span="6" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="314b4" class="javax.swing.JList" binding="recordsList">
+            <constraints/>
+            <properties/>
+          </component>
+        </children>
+      </scrollpane>
       <component id="343d4" class="javax.swing.JButton" binding="quitButton" default-binding="true">
         <constraints>
-          <grid row="15" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="14" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Quit"/>
