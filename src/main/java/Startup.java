@@ -87,20 +87,22 @@ public class Startup extends MusicStoreGUI{
                 albumsInfo.add(artist + ", " + title + " at " + location);
             }
             JOptionPane.showMessageDialog(null, "Attention! These records have been in the system for " + DAYS_TO_MOVE_TO_BARGAIN_BASEMENT + " days, it is time to alert the consignor or move them to the bargain basement and change price to $" + BARGAIN_BASEMENT_PRICE +
-                    ":\nRecordNum(s): " + overBargainBasementDays.toString() + " Record Details:" + bargainBasementDetails);
+                    ":\nRecordNum(s): " + overBargainBasementDays.toString() + "\nRecord Details:" + bargainBasementDetails);
         }
 
         String findDaysDonateSQL = "SELECT * FROM " + RECORDS_TABLE_NAME + " WHERE " + DAYS_IN_STORE_COLUMN_NAME + " >= " + DAYS_TO_DONATE;
         ResultSet rsDonate = statement.executeQuery(findDaysDonateSQL);
         while (rsDonate.next()) {
             overDonateDays.add(rsDonate.getInt(RECORD_NUMBER_COLUMN_NAME));
+            donateDetails.add("\nConsignorNum: " + rsBasement1.getString(CONSIGNOR_NUMBER_COLUMN_NAME) + " Record: " + rsBasement1.getString(ARTIST_COLUMN_NAME) + ", " + rsBasement1.getString(TITLE_COLUMN_NAME) + " located at " + rsBasement1.getString(LOCATION_COLUMN_NAME));
         }
         // TODO ask the user if they want the computer to write consignors to call and records to donate to a list and/or delete record from database for them
         if (!overDonateDays.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Attention! These records have been in the system for at least " + DAYS_TO_DONATE + " days, it is time to contact the consignors and donate them:\nRecord Num(s): " + overDonateDays.toString());
+            JOptionPane.showMessageDialog(null, "Attention! These records have been in the system for at least " + DAYS_TO_DONATE + " days, it is time to contact the consignors and donate them:\nRecord Num(s): " + overDonateDays.toString() + "\nRecord Details:" + donateDetails);
         }
     }
 
+    // Checks if there are too many of any album and alerts the user
     static void checkNumCopiesMax() throws SQLException {
         conn = DBUtils.getConnection();
         statement = conn.createStatement();

@@ -301,7 +301,7 @@ public class MusicStoreGUI extends JFrame{
                     while (rsRecord.next()) {
                         associatedRecords.add("\nRecordNum: " + rsRecord.getString(RECORD_NUMBER_COLUMN_NAME) + ", Artist: " + rsRecord.getString(ARTIST_COLUMN_NAME) + ", Title: " + rsRecord.getString(TITLE_COLUMN_NAME) + ", Location: " + rsRecord.getString(LOCATION_COLUMN_NAME));
                     }
-                    // TODO last, add etc metadata
+                    // TODO add etc metadata(?)
                     JOptionPane.showMessageDialog(null, " ID Number: " + rsConsignor.getString(CONSIGNOR_NUMBER_COLUMN_NAME) + "\n Phone number: " + rsConsignor.getString(PHONE_COLUMN_NAME) + "\n Amount Owed: $" + rsConsignor.getString(AMOUNT_OWED_COLUMN_NAME) + "\nTotal profit: $" +
                             rsConsignor.getString(PROFIT_COLUMN_NAME) + "\n\nAssociated records: " + associatedRecords, rsConsignor.getString(LAST_NAME_COLUMN_NAME) + ", " + rsConsignor.getString(FIRST_NAME_COLUMN_NAME), JOptionPane.PLAIN_MESSAGE);
                 } catch (SQLException sqle) {
@@ -337,7 +337,7 @@ public class MusicStoreGUI extends JFrame{
             }
         });
 
-        // TODO last, metadata
+        // TODO metadata(?)
         statisticsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
