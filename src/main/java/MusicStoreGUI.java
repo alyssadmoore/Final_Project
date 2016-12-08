@@ -337,16 +337,20 @@ public class MusicStoreGUI extends JFrame{
             }
         });
 
-        // TODO metadata(?)
+        // TODO add metadata
         statisticsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String totalStoreEarningsSQL = "SELECT SUM(" + STORE_CUT_COLUMN_NAME + ") FROM " + SALES_TABLE_NAME;
+                String averageDaysInStoreSQL = "SELECT AVG(" + DAYS_IN_STORE_COLUMN_NAME + ") FROM " + RECORDS_TABLE_NAME;
                 try {
                     ResultSet earningsRS = statement.executeQuery(totalStoreEarningsSQL);
                     earningsRS.next();
                     Double totalEarnings = earningsRS.getDouble("SUM(" + STORE_CUT_COLUMN_NAME + ")");
-                    JOptionPane.showMessageDialog(null, "Total earnings: $" + totalEarnings, "Statistics", JOptionPane.INFORMATION_MESSAGE);
+                    ResultSet avgDaysRS = statement.executeQuery(averageDaysInStoreSQL);
+                    avgDaysRS.next();
+                    int avgDaysInStore = avgDaysRS.getInt("AVG(" + DAYS_IN_STORE_COLUMN_NAME + ")");
+                    JOptionPane.showMessageDialog(null, "Total earnings: $" + totalEarnings + "\nAverage number of days in-store: " + avgDaysInStore, "Statistics", JOptionPane.INFORMATION_MESSAGE);
                 } catch (SQLException sqle) {
                     JOptionPane.showMessageDialog(null, "There was an error finding statistics. Printing stack trace.");
                     sqle.printStackTrace();
