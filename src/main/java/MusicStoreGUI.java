@@ -341,7 +341,16 @@ public class MusicStoreGUI extends JFrame{
         statisticsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                String totalStoreEarningsSQL = "SELECT SUM(" + STORE_CUT_COLUMN_NAME + ") FROM " + SALES_TABLE_NAME;
+                try {
+                    ResultSet earningsRS = statement.executeQuery(totalStoreEarningsSQL);
+                    earningsRS.next();
+                    Double totalEarnings = earningsRS.getDouble("SUM(" + STORE_CUT_COLUMN_NAME + ")");
+                    JOptionPane.showMessageDialog(null, "Total earnings: $" + totalEarnings, "Statistics", JOptionPane.INFORMATION_MESSAGE);
+                } catch (SQLException sqle) {
+                    JOptionPane.showMessageDialog(null, "There was an error finding statistics. Printing stack trace.");
+                    sqle.printStackTrace();
+                }
             }
         });
 

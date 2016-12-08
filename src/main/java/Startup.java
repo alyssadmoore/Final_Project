@@ -5,12 +5,14 @@ import javax.swing.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 // Each of these methods is called upon when the program first starts
+// Some can be called upon later as well
 public class Startup extends MusicStoreGUI{
 
-    final static int DAYS_TO_MOVE_TO_BARGAIN_BASEMENT = 3;
+    final static int DAYS_TO_MOVE_TO_BARGAIN_BASEMENT = 30;
     final static int DAYS_TO_DONATE = 365;
     final static double BARGAIN_BASEMENT_PRICE = 1.00;
     static ArrayList<String> overNumCopies = new ArrayList<>();
@@ -73,8 +75,6 @@ public class Startup extends MusicStoreGUI{
         for (int x = 0; x < overBargainBasementDays.size(); x++){
             String updatePriceSQL = "UPDATE " + RECORDS_TABLE_NAME + " SET " + PRICE_COLUMN_NAME + " = " + BARGAIN_BASEMENT_PRICE + " WHERE " + RECORD_NUMBER_COLUMN_NAME + " = " + overBargainBasementDays.get(x);
             statement.executeUpdate(updatePriceSQL);
-            String updateLocationSQL = "UPDATE " + RECORDS_TABLE_NAME + " SET " + LOCATION_COLUMN_NAME + " = 'Basement' WHERE " + RECORD_NUMBER_COLUMN_NAME + " = " + overBargainBasementDays.get(x);
-            statement.executeUpdate(updateLocationSQL);
         }
 
         if (!overBargainBasementDays.isEmpty()) {
@@ -92,13 +92,22 @@ public class Startup extends MusicStoreGUI{
 
         String findDaysDonateSQL = "SELECT * FROM " + RECORDS_TABLE_NAME + " WHERE " + DAYS_IN_STORE_COLUMN_NAME + " >= " + DAYS_TO_DONATE;
         ResultSet rsDonate = statement.executeQuery(findDaysDonateSQL);
+        String findDaysSQL = "SELECT * FROM " + RECORDS_TABLE_NAME + " WHERE " + DAYS_IN_STORE_COLUMN_NAME + " >= " + DAYS_TO_MOVE_TO_BARGAIN_BASEMENT;
+        Statement stat = conn.createStatement();
+        ResultSet rsBasement3 = stat.executeQuery(findDaysSQL);
         while (rsDonate.next()) {
             overDonateDays.add(rsDonate.getInt(RECORD_NUMBER_COLUMN_NAME));
-            donateDetails.add("\nConsignorNum: " + rsBasement1.getString(CONSIGNOR_NUMBER_COLUMN_NAME) + " Record: " + rsBasement1.getString(ARTIST_COLUMN_NAME) + ", " + rsBasement1.getString(TITLE_COLUMN_NAME) + " located at " + rsBasement1.getString(LOCATION_COLUMN_NAME));
+        }
+        while (rsBasement3.next()) {
+            donateDetails.add("\nConsignorNum: " + rsBasement3.getString(CONSIGNOR_NUMBER_COLUMN_NAME) + " Record: " + rsBasement3.getString(ARTIST_COLUMN_NAME) + ", " + rsBasement3.getString(TITLE_COLUMN_NAME) + " located at " + rsBasement3.getString(LOCATION_COLUMN_NAME));
         }
         // TODO ask the user if they want the computer to write consignors to call and records to donate to a list and/or delete record from database for them
         if (!overDonateDays.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Attention! These records have been in the system for at least " + DAYS_TO_DONATE + " days, it is time to contact the consignors and donate them:\nRecord Num(s): " + overDonateDays.toString() + "\nRecord Details:" + donateDetails);
+        }
+        for (int x = 0; x < overBargainBasementDays.size(); x++) {
+            String updateLocationSQL = "UPDATE " + RECORDS_TABLE_NAME + " SET " + LOCATION_COLUMN_NAME + " = 'Basement' WHERE " + RECORD_NUMBER_COLUMN_NAME + " = " + overBargainBasementDays.get(x);
+            statement.executeUpdate(updateLocationSQL);
         }
     }
 
