@@ -1,5 +1,5 @@
 // Each method does a different user entry validation
-public class UserEntryValidation {
+public class Validation {
 
     // Checks if user entry is an integer
     static boolean entryInt(String entryValue) {
