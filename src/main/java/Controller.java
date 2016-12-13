@@ -41,15 +41,15 @@ public class Controller {
         db.removeRecord(record, price);
     }
 
-    ArrayList populateRecordList() {
+    ArrayList<String> populateRecordList() {
         return db.populateRecordList();
     }
 
-    ArrayList populateConsignorList() {
+    ArrayList<String> populateConsignorList() {
         return db.populateConsignorList();
     }
 
-    ArrayList updateComboBox() {
+    ArrayList<Integer> updateComboBox() {
         return db.updateComboBox();
     }
 
@@ -63,14 +63,6 @@ public class Controller {
 
     void checkNumCopiesMax() {
         db.checkNumCopiesMax();
-    }
-
-    String findConsignorName(int consignor) {
-        return db.findConsignorGivenNum(consignor);
-    }
-
-    String findRecordTitle(int record) {
-        return DB.findRecordGivenNum(record);
     }
 
     String getStatistics() {

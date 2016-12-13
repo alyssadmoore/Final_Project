@@ -70,8 +70,6 @@ public class MusicStoreGUI extends JFrame{
 
     private final static String CONSIGNOR_TABLE_NAME = "Consignors";
     private final static String RECORDS_TABLE_NAME = "Records";
-    private final static String CONSIGNOR_NUMBER_COLUMN_NAME = "ConsignorNum";
-    private final static String RECORD_NUMBER_COLUMN_NAME = "RecordNum";
     private final static String ARTIST_COLUMN_NAME = "Artist";
     private final static String TITLE_COLUMN_NAME = "Title";
     private final static String PRICE_COLUMN_NAME = "Price";
@@ -132,7 +130,7 @@ public class MusicStoreGUI extends JFrame{
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
-    void createListeners() {
+    private void createListeners() {
 
         // Adding a consignor to the database
         addConsignorButton.addActionListener(new ActionListener() {
@@ -392,12 +390,20 @@ public class MusicStoreGUI extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 int recordNum = 0;
-                if (Validation.entryInt(updateRecordField.getText())) {
+                boolean needMoreInfo = false;
+                if (Validation.entryInt(updateRecordField.getText()) && controller.recordExists(updateRecordField.getText())) {
                     recordNum = Integer.parseInt(updateRecordField.getText());
+                } else {
+                    JOptionPane.showMessageDialog(null, "Either you didn't enter an integer (1, 2, 3, etc.) or that record doesn't exist. Please try again.");
+                    needMoreInfo = true;
                 }
-                String newVariable = updateRecordNewValue.getText();
-                String toChange = (String)updateRecordComboBox.getSelectedItem();
-                controller.updateRecord(recordNum, newVariable, toChange);
+                if (!needMoreInfo) {
+                    String newVariable = updateRecordNewValue.getText();
+                    String toChange = (String) updateRecordComboBox.getSelectedItem();
+                    controller.updateRecord(recordNum, newVariable, toChange);
+                    JOptionPane.showMessageDialog(null, "Update successful.");
+                    updateRecordsList(controller.populateRecordList());
+                }
             }
         });
 

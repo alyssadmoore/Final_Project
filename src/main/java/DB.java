@@ -266,7 +266,7 @@ public class DB {
     }
 
     // Populates the consignors list from the database
-    ArrayList populateConsignorList() {
+    ArrayList<String> populateConsignorList() {
         try (Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, USER, PASSWORD)) {
             consignors.clear();
             String populateConsignorsSQL = "SELECT " + LAST_NAME_COLUMN_NAME + ", " + FIRST_NAME_COLUMN_NAME + " FROM " + CONSIGNOR_TABLE_NAME + " ORDER BY " + LAST_NAME_COLUMN_NAME + ", " + FIRST_NAME_COLUMN_NAME;
@@ -289,7 +289,7 @@ public class DB {
     }
 
     // Populates the records list from the database
-    ArrayList populateRecordList() {
+    ArrayList<String> populateRecordList() {
         try (Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, USER, PASSWORD);
              Statement statement = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
             record.clear();
@@ -314,7 +314,7 @@ public class DB {
     }
 
     // Creates ArrayList with all ConsignorNums in database
-    ArrayList updateComboBox() {
+    ArrayList<Integer> updateComboBox() {
         try (Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, USER, PASSWORD);
              Statement statement = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
             ArrayList<Integer> comboBoxItems = new ArrayList();
@@ -377,7 +377,7 @@ public class DB {
     }
 
     // Checks if a certain record exists
-    static boolean recordExists(String userEntry) {
+    boolean recordExists(String userEntry) {
         try (Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, USER, PASSWORD);) {
             String lookupViewAllRecordsSQL = "SELECT * FROM " + RECORDS_TABLE_NAME + " WHERE " + RECORD_NUMBER_COLUMN_NAME + " = ?";
             PreparedStatement checkRecordPresent = conn.prepareStatement(lookupViewAllRecordsSQL);
@@ -792,7 +792,12 @@ public class DB {
     void updateRecord(int recordNum, String newVariable, String toUpdate) {
         try (Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, USER, PASSWORD);
              Statement statement = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
-            String updateSQL = "UPDATE " + RECORDS_TABLE_NAME + " SET " + toUpdate + " = " + newVariable + " WHERE " + toUpdate + " = " + recordNum;
+            String updateSQL = "";
+            if (toUpdate == PRICE_COLUMN_NAME) {
+                updateSQL = "UPDATE " + RECORDS_TABLE_NAME + " SET " + toUpdate + " = " + newVariable + " WHERE " + RECORD_NUMBER_COLUMN_NAME + " = " + recordNum;
+            } else {
+                updateSQL = "UPDATE " + RECORDS_TABLE_NAME + " SET " + toUpdate + " = '" + newVariable + "' WHERE " + RECORD_NUMBER_COLUMN_NAME + " = " + recordNum;
+            }
             statement.executeUpdate(updateSQL);
             statement.close();
             conn.close();
