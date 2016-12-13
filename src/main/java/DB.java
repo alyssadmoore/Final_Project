@@ -70,15 +70,12 @@ public class DB {
             if (!consignorsTableExists()) {
                 String createTableSQL = "CREATE TABLE " + CONSIGNOR_TABLE_NAME + " (" + CONSIGNOR_NUMBER_COLUMN_NAME + " int NOT NULL AUTO_INCREMENT, " + LAST_NAME_COLUMN_NAME + " varchar(30), " + FIRST_NAME_COLUMN_NAME + " varchar(30), " + PHONE_COLUMN_NAME + " varchar(15) NOT NULL, " + AMOUNT_OWED_COLUMN_NAME + " double, " + PROFIT_COLUMN_NAME + " double, PRIMARY KEY(" + CONSIGNOR_NUMBER_COLUMN_NAME + "))";
                 statement.executeUpdate(createTableSQL);
-                System.out.println("Created Consignors table");
             } if (!recordsTableExists()) {
                 String createTableSQL = "CREATE TABLE " + RECORDS_TABLE_NAME + " (" + RECORD_NUMBER_COLUMN_NAME + " int NOT NULL AUTO_INCREMENT, " + CONSIGNOR_NUMBER_COLUMN_NAME + " int NOT NULL, " + ARTIST_COLUMN_NAME + " varchar(30), " + TITLE_COLUMN_NAME + " varchar(30), " + PRICE_COLUMN_NAME + " double, " + DATE_RECEIVED_COLUMN_NAME + " varchar(30), " + DAYS_IN_STORE_COLUMN_NAME + " int, " + LOCATION_COLUMN_NAME + " varchar(10), PRIMARY KEY(" + RECORD_NUMBER_COLUMN_NAME + "), FOREIGN KEY(" + CONSIGNOR_NUMBER_COLUMN_NAME + ") REFERENCES " + CONSIGNOR_TABLE_NAME + "(" + CONSIGNOR_NUMBER_COLUMN_NAME + "))";
                 statement.executeUpdate(createTableSQL);
-                System.out.println("Created Records table");
             } if (!salesTableExists()) {
                 String createTablesSQL = "CREATE TABLE " + SALES_TABLE_NAME + " (" + SALE_NUMBER_COLUMN_NAME + " int NOT NULL AUTO_INCREMENT, " + RECORD_NUMBER_COLUMN_NAME + " int NOT NULL, " + CONSIGNOR_NUMBER_COLUMN_NAME + " int NOT NULL, " + ARTIST_COLUMN_NAME + " varchar(30), " + TITLE_COLUMN_NAME + " varchar(30), " + SALE_PRICE_COLUMN_NAME + " double, " + STORE_CUT_COLUMN_NAME + " double, " + SALE_DATE_COLUMN_NAME + " varchar(30), PRIMARY KEY (" + SALE_NUMBER_COLUMN_NAME + "))";
                 statement.executeUpdate(createTablesSQL);
-                System.out.println("Created Sales table");
             }
             statement.close();
             conn.close();
@@ -301,7 +298,9 @@ public class DB {
             while (rs.next()) {
                 String artist = rs.getString(ARTIST_COLUMN_NAME);
                 String title = rs.getString(TITLE_COLUMN_NAME);
-                record.add(artist + ", " + title);
+                if (!record.contains(artist + ", " + title)) {
+                    record.add(artist + ", " + title);
+                }
             }
             rs.close();
             statement.close();
@@ -335,7 +334,7 @@ public class DB {
         }
     }
 
-    // Returns a consignor's first and last name
+    // Returns a consignor's first and last name in JList format
     String findConsignorGivenNum(int number) {
         try (Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, USER, PASSWORD)) {
             String lookupConsignorSQL = "SELECT " + LAST_NAME_COLUMN_NAME + ", " + FIRST_NAME_COLUMN_NAME + " FROM " + CONSIGNOR_TABLE_NAME + " WHERE " + CONSIGNOR_NUMBER_COLUMN_NAME + " = ?";
@@ -419,6 +418,7 @@ public class DB {
         }
     }
 
+    // Adds a consignor to the database
     void addConsignor(String last, String first, String phone) {
         try (Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, USER, PASSWORD);) {
             String addConsignorSQL = "INSERT INTO " + CONSIGNOR_TABLE_NAME + "(" + LAST_NAME_COLUMN_NAME + ", " + FIRST_NAME_COLUMN_NAME + ", " + PHONE_COLUMN_NAME + ", " + AMOUNT_OWED_COLUMN_NAME + ", " + PROFIT_COLUMN_NAME + ") VALUES (?, ?, ?, 0.0, 0.0)";
@@ -435,6 +435,7 @@ public class DB {
         }
     }
 
+    // Adds a record to the database
     void addRecord(int consignor, String artist, String title, double price, String location) {
         try (Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, USER, PASSWORD);) {
             String addRecordSQL = "INSERT INTO " + RECORDS_TABLE_NAME + " (" + CONSIGNOR_NUMBER_COLUMN_NAME + ", " + ARTIST_COLUMN_NAME + ", " + TITLE_COLUMN_NAME + ", " + PRICE_COLUMN_NAME + ", " + DATE_RECEIVED_COLUMN_NAME + ", " + DAYS_IN_STORE_COLUMN_NAME + ", " + LOCATION_COLUMN_NAME + ") VALUES (?, ?, ?, ?, ?, 0, ?)";
@@ -455,6 +456,7 @@ public class DB {
         }
     }
 
+    // Removes a consignor from the database
     void removeConsignor(int consignor) {
         try (Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, USER, PASSWORD);) {
             String deleteSQL = "DELETE FROM " + CONSIGNOR_TABLE_NAME + " WHERE " + CONSIGNOR_NUMBER_COLUMN_NAME + " = ?";
@@ -469,7 +471,8 @@ public class DB {
         }
     }
 
-    String removeRecord(int recordNum, double price) {
+    // Removes a record from the database
+    void removeRecord(int recordNum, double price) {
         try (Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, USER, PASSWORD);
              Statement statement = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
 
@@ -521,29 +524,16 @@ public class DB {
             insertSales.setString(7, DateTime.now().toString());
             insertSales.executeUpdate();
 
-            String findMoreRecordsSQL = "SELECT " + ARTIST_COLUMN_NAME + " , " + TITLE_COLUMN_NAME + " FROM " + RECORDS_TABLE_NAME + " WHERE " + ARTIST_COLUMN_NAME + " = ? AND " + TITLE_COLUMN_NAME + " = ?";
-            PreparedStatement findMoreRecords = conn.prepareStatement(findMoreRecordsSQL);
-            findMoreRecords.setString(1, artist);
-            findMoreRecords.setString(2, title);
-            ResultSet rs = findMoreRecords.executeQuery();
-            if (!rs.next()) {
-                return fullAlbum;
-            }
-
             conn.close();
-            rs.close();
             consignorCurrentProfitRS.close();
             currentConsignorRS.close();
             getCurrentConsignor.close();
             getCurrentAmountOwed.close();
             deleteRecord.close();
-            findMoreRecords.close();
-
         } catch (SQLException sqle) {
             System.out.println("There was an error deleting a record. Printing stack trace.");
             sqle.printStackTrace();
         }
-        return null;
     }
 
     // Returns a consignor's ID number
@@ -568,6 +558,7 @@ public class DB {
         }
     }
 
+    // Returns an ArrayList of records associated with a particular consignor
     ArrayList<String> findAssociatedRecords(int consignorNum) {
         ArrayList<String> associatedRecords = new ArrayList();
         try (Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, USER, PASSWORD);
@@ -587,7 +578,7 @@ public class DB {
         }
     }
 
-    // TODO add metadata
+    // Generates statistics from the database, such as average number of days in-store
     String getStatistics() {
         try (Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, USER, PASSWORD);
              Statement statement = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
@@ -611,6 +602,7 @@ public class DB {
         }
     }
 
+    // Updates a consignor's owed amount and profit
     void payAConsignor(int consignor, double payment) {
         try (Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, USER, PASSWORD);
              Statement statement = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
@@ -637,6 +629,7 @@ public class DB {
         }
     }
 
+    // Returns all information in the Consignors table about a certain consignor
     String getConsignorInfo(int consignor) {
         try (Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, USER, PASSWORD);
              Statement statement = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
@@ -664,6 +657,7 @@ public class DB {
         return null;
     }
 
+    // Returns an ArrayList containing all information about a certain record in the Records table
     ArrayList<String> clickRecord(String fullAlbum) {
         recordInfo.clear();
         try (Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, USER, PASSWORD);
@@ -691,6 +685,7 @@ public class DB {
         }
     }
 
+    // Returns the same things as the method above, but accepts arguments for use in search
     ArrayList<String> findRecordInfo(String artist, String title, boolean or) {
         try (Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, USER, PASSWORD);
              Statement statement = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
@@ -725,6 +720,7 @@ public class DB {
         }
     }
 
+    // Returns an ArrayList of information about a consignor that accepts arguments for use in search
     ArrayList<String> findConsignorInfo(String first, String last, String phone, boolean firstOrLast, boolean lastOrPhone, boolean phoneOrFirst) {
         try (Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, USER, PASSWORD);
              Statement statement = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
@@ -775,6 +771,34 @@ public class DB {
             System.out.println("There was an error finding consignor information. Printing stack trace");
             sqle.printStackTrace();
             return null;
+        }
+    }
+
+    // Updating a consignor's information in the database
+    void updateConsignor(int consignorNum, String newVariable, String toUpdate) {
+        try (Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, USER, PASSWORD);
+             Statement statement = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
+            String updateSQL = "UPDATE " + CONSIGNOR_TABLE_NAME + " SET " + toUpdate + " = '" + newVariable + "' WHERE " + CONSIGNOR_NUMBER_COLUMN_NAME + " = " + consignorNum;
+            statement.executeUpdate(updateSQL);
+            statement.close();
+            conn.close();
+        } catch (SQLException sqle) {
+            System.out.println("There was an error updating consignor information. Printing stack trace.");
+            sqle.printStackTrace();
+        }
+    }
+
+    // Updating a record's information in the database
+    void updateRecord(int recordNum, String newVariable, String toUpdate) {
+        try (Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, USER, PASSWORD);
+             Statement statement = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
+            String updateSQL = "UPDATE " + RECORDS_TABLE_NAME + " SET " + toUpdate + " = " + newVariable + " WHERE " + toUpdate + " = " + recordNum;
+            statement.executeUpdate(updateSQL);
+            statement.close();
+            conn.close();
+        } catch (SQLException sqle) {
+            System.out.println("There was an error updating records. Printing stack trace.");
+            sqle.printStackTrace();
         }
     }
 }

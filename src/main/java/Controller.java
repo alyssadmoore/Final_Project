@@ -29,6 +29,10 @@ public class Controller {
         db.addRecord(consignor, artist, title, price, location);
     }
 
+    boolean recordExists(String userEntry) {
+        return db.recordExists(userEntry);
+    }
+
     void removeConsignor(int consignor) {
         db.removeConsignor(consignor);
     }
@@ -99,5 +103,13 @@ public class Controller {
 
     ArrayList<String> findConsignorInfo(String first, String last, String phone, boolean firstOrLast, boolean lastOrPhone, boolean phoneOrFirst) {
         return db.findConsignorInfo(first, last, phone, firstOrLast, lastOrPhone, phoneOrFirst);
+    }
+
+    void updateConsignor(int consignorNum, String newVariable, String toUpdate) {
+        db.updateConsignor(consignorNum, newVariable, toUpdate);
+    }
+
+    void updateRecord(int recordNum, String newVariable, String toUpdate) {
+        db.updateRecord(recordNum, newVariable, toUpdate);
     }
 }
