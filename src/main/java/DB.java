@@ -210,7 +210,7 @@ public class DB {
             while (rsBasement3.next()) {
                 donateDetails.add("\nConsignorNum: " + rsBasement3.getString(CONSIGNOR_NUMBER_COLUMN_NAME) + " Record: " + rsBasement3.getString(ARTIST_COLUMN_NAME) + ", " + rsBasement3.getString(TITLE_COLUMN_NAME) + " located at " + rsBasement3.getString(LOCATION_COLUMN_NAME));
             }
-            // TODO ask the user if they want the computer to write consignors to call and records to donate to a list and/or delete record from database for them
+
             if (!overDonateDays.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Attention! These records have been in the system for at least " + DAYS_TO_DONATE + " days, it is time to contact the consignors and donate them:\nRecord Num(s): " + overDonateDays.toString() + "\nRecord Details:" + donateDetails);
             }

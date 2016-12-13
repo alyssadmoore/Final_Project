@@ -225,7 +225,6 @@ public class MusicStoreGUI extends JFrame{
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(null, "Please select a consignor to view more info");
                 }
-                // TODO add etc metadata(?)
                 if (consignorNum != 0) {
                     JOptionPane.showMessageDialog(null, controller.getConsignorInfo(consignorNum) + "\n\nAssociated records: " + associatedRecords);
                 }
